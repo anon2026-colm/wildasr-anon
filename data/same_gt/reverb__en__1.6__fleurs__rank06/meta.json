@@ -1,0 +1,8 @@
+{
+  "gt_text_norm": "he was reportedly aged in his twenties in a statement bieber said while i was not present nor directly involved with this tragic accident my thoughts and prayers are with the family of the victim",
+  "pred_text_norm": "he was reportedly aged in his 20s in a statement beaver said while i was not present nor directly involved with this tragic accident my thoughts and prayers are with the family of the victim",
+  "clean_model_pred_norm": "he was reportedly aged in his 20s in a statement beaver said while i was not present nor directly involved with this tragic accident my thoughts and prayers are with the family of the victim",
+  "model": "Whisper Large V3",
+  "wer_augmentation": 65.7143,
+  "wer_clean": 2.8571
+}

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Audio Sample Review</title>
+  <style>
+    body { font-family: sans-serif; max-width: 1200px; margin: 0 auto; padding: 24px; color: #222; }
+    h1 { font-size: 20px; margin-bottom: 4px; }
+    .subtitle { font-size: 14px; color: #888; margin-bottom: 20px; }
+    .card { border: 1px solid #ddd; border-radius: 8px; padding: 16px 20px; margin-bottom: 14px; background: #fafafa; }
+    .card-header { margin-bottom: 12px; }
+    .cond-tag { display: inline-block; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; background: #e8f0fe; color: #1a56db; padding: 2px 8px; border-radius: 4px; }
+    .model-tag { display: inline-block; font-size: 12px; font-weight: 600; background: #f3f4f6; color: #374151; padding: 2px 8px; border-radius: 4px; margin-left: 8px; }
+    .audio-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 14px; }
+    .audio-col > .alabel { display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 5px; }
+    audio { width: 100%; }
+    .text-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; border-top: 1px solid #eee; padding-top: 12px; }
+    .text-col > .tl { font-size: 11px; font-weight: 700; color: #bbb; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
+    .text-col > p { margin: 0; font-size: 14px; line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <h1>Audio Sample Review</h1>
+  <p class="subtitle">Compare paired audio samples with reference text and system transcripts.</p>
+  <div id="cards"></div>
+<script>
+const S = [{"condition": "clipping", "severity": "0.4", "source": "fleurs", "rank": 8, "gt_text": "he was reportedly aged in his twenties in a statement bieber said while i was not present nor directly involved with this tragic accident my thoughts and prayers are with the family of the victim", "clean_pred": "he was reportedly aged in his twenties in a statement bieber said while i was not present nor directly involved with this tragic accident my thoughts and prayers are with the family of the victim", "pred_text": "he was reportedly aged in his twenties in a statement bieber said", "model": "Whisper Large V3", "clean_src": "data/same_gt/clipping__en__0.4__fleurs__rank08/clean.wav", "degraded_src": "data/same_gt/clipping__en__0.4__fleurs__rank08/degraded.wav"}, {"condition": "distance", "severity": "16.0", "source": "fleurs", "rank": 4, "gt_text": "he was reportedly aged in his twenties in a statement bieber said while i was not present nor directly involved with this tragic accident my thoughts and prayers are with the family of the victim", "clean_pred": "he was reportedly aged in his 20s in a statement bieber said while i was not present nor directly involved with this tragic accident my thoughts and prayers are with the family of the victim", "pred_text": "he was reportedly aged in his 20s", "model": "Gemini 2.5 Pro", "clean_src": "data/same_gt/distance__en__16.0__fleurs__rank04/clean.wav", "degraded_src": "data/same_gt/distance__en__16.0__fleurs__rank04/degraded.wav"}, {"condition": "noisegap", "severity": "(5, 0.2)", "source": "fleurs", "rank": 20, "gt_text": "he was reportedly aged in his twenties in a statement bieber said while i was not present nor directly involved with this tragic accident my thoughts and prayers are with the family of the victim", "clean_pred": "he was reportedly aged in his 20s in a statement bieber said while i was not present nor directly involved with this tragic accident my thoughts and prayers are with the family of the victim", "pred_text": "he was reportedly aged in his twenties and in a statement bieber said while i was not present nor directly involved with this tragic accident my thoughts and prayers are with the family of the victim", "model": "Scribe V1", "clean_src": "data/same_gt/noisegap__en__5__0.2__fleurs__rank20/clean.wav", "degraded_src": "data/same_gt/noisegap__en__5__0.2__fleurs__rank20/degraded.wav"}, {"condition": "phone_codec", "severity": "gsm", "source": "fleurs", "rank": 8, "gt_text": "he was reportedly aged in his twenties in a statement bieber said while i was not present nor directly involved with this tragic accident my thoughts and prayers are with the family of the victim", "clean_pred": "he was reportedly aged in his twenties in a statement beaver said while i was not present nor directly involved with this tragic accident my thoughts and prayers are with the family of the victim", "pred_text": "he was reportedly aged in his twenties and a statement beaver said while i was not present nor directly involved with this tragic accident my thoughts and prayers are with the family of the victim", "model": "Qwen2 Audio", "clean_src": "data/same_gt/phone_codec__en__gsm__fleurs__rank08/clean.wav", "degraded_src": "data/same_gt/phone_codec__en__gsm__fleurs__rank08/degraded.wav"}, {"condition": "reverb", "severity": "1.6", "source": "fleurs", "rank": 6, "gt_text": "he was reportedly aged in his twenties in a statement bieber said while i was not present nor directly involved with this tragic accident my thoughts and prayers are with the family of the victim", "clean_pred": "he was reportedly aged in his 20s in a statement beaver said while i was not present nor directly involved with this tragic accident my thoughts and prayers are with the family of the victim", "pred_text": "he was reportedly aged in his 20s in a statement beaver said while i was not present nor directly involved with this tragic accident my thoughts and prayers are with the family of the victim", "model": "Whisper Large V3", "clean_src": "data/same_gt/reverb__en__1.6__fleurs__rank06/clean.wav", "degraded_src": "data/same_gt/reverb__en__1.6__fleurs__rank06/degraded.wav"}];
+
+function esc(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+const container = document.getElementById('cards');
+S.forEach(s => {
+  const div = document.createElement('div');
+  div.className = 'card';
+  div.innerHTML =
+    '<div class="card-header"><span class="cond-tag">' + esc(s.condition) + '</span><span class="model-tag">' + esc(s.model) + '</span></div>' +
+    '<div class="audio-row">' +
+      '<div class="audio-col"><span class="alabel">Original (clean)</span><audio controls src="' + esc(s.clean_src) + '"></audio></div>' +
+      '<div class="audio-col"><span class="alabel">Degraded</span><audio controls src="' + esc(s.degraded_src) + '"></audio></div>' +
+    '</div>' +
+    '<div class="text-row">' +
+      '<div class="text-col"><div class="tl">Ground truth</div><p>' + esc(s.gt_text) + '</p></div>' +
+      '<div class="text-col"><div class="tl">Transcription (clean)</div><p>' + esc(s.clean_pred) + '</p></div>' +
+      '<div class="text-col"><div class="tl">Transcription (degraded)</div><p>' + esc(s.pred_text) + '</p></div>' +
+    '</div>';
+  container.appendChild(div);
+});
+</script>
+</body>
+</html>
